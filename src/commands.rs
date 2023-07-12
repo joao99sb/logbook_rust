@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Commnads {
     pub command: String,
     pub description: String,
@@ -10,4 +11,8 @@ impl Commnads {
             description: d,
         }
     }
+}
+
+enum CommandsList {
+    MKDIR,
 }

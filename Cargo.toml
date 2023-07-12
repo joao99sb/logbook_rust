@@ -6,15 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [scripts]
-dev = "RUST_LOG=debug cargo run "
+dev = "RUST_LOG=debug  cargo run "
 
 
 [dependencies]
+ansi_term = "0.12.1"
 cargo-watch = "8.4.0"
 crossterm = "0.26.1"
 env_logger = "0.10.0"
 error-stack = "0.3.1"
-log = "0.4.19"
+log = "0.4.17"
 rand = "0.8.5"
 shell-words = "1.1.0"
 tui = "0.19.0"
