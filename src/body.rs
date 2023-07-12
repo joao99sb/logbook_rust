@@ -2,6 +2,7 @@ use ansi_term;
 use crossterm::cursor;
 use error_stack::{IntoReport, Report, Result, ResultExt};
 use std::io::{BufRead, BufReader, Read};
+use std::vec;
 use std::{fs, path::PathBuf};
 use tui::{
     style::{Color, Modifier, Style},
@@ -126,33 +127,41 @@ impl Body {
 
 impl Body {
     pub fn build_body<'a>(&mut self, commands_file: &PathBuf, current_dir: &PathBuf) -> List<'a> {
-        let dir_name = current_dir.as_os_str().to_str().unwrap();
-        let dir_name_vector: Vec<String> = dir_name.split('/').map(|s| s.to_string()).collect();
-        let current_dir_name = dir_name_vector.last().unwrap().to_owned();
+        let current_dir_str = current_dir.as_os_str().to_str().unwrap();
 
         let body = match self.body_mode {
-            BodyMode::List => self.build_list_content(current_dir_name),
+            BodyMode::List => self.build_list_content(current_dir_str),
             BodyMode::Command => self.build_command_list(commands_file).unwrap(),
         };
         return body;
     }
 
-    pub fn build_list_content<'a>(&mut self, current_dir_name: String) -> List<'a> {
-        let rows_list = vec!["Linux", "Todo", "logbook"];
+    pub fn build_list_content<'a>(&mut self, current_dir_str: &str) -> List<'a> {
+        let current_dir_vector: Vec<String> =
+            current_dir_str.split('/').map(|s| s.to_string()).collect();
+        let current_dir_name = current_dir_vector.last().unwrap().to_owned();
+
+        let rows_list = Body::list_all_itens_current_dir(current_dir_str);
+
+        // let rows_list = vec!["Linux", "Todo", "logbook"];
 
         let item_style = Style::default().fg(Color::White).bg(Color::Black);
 
         let list_items: Vec<_> = rows_list
             .iter()
             .map(|item| {
-                let lines = vec![Spans::from(*item)];
+                let lines = vec![Spans::from(item.to_owned())];
 
                 ListItem::new(lines).style(item_style)
             })
             .collect();
 
         let list = List::new(list_items)
-            .block(Block::default().borders(Borders::ALL).title(current_dir_name))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(current_dir_name),
+            )
             .highlight_style(
                 Style::default()
                     .bg(Color::LightGreen)
@@ -201,5 +210,28 @@ impl Body {
         let commands_body =
             List::new(commands).block(Block::default().borders(Borders::ALL).title("Commands"));
         return Ok(commands_body);
+    }
+}
+
+impl Body {
+    fn list_all_itens_current_dir(current_dir: &str) -> Vec<String> {
+        let entries = match fs::read_dir(current_dir) {
+            Ok(entries) => entries,
+            Err(e) => panic!("Erro ao ler o diretório: {}", e),
+        };
+
+        let mut all_nodes: Vec<String> = Vec::new();
+        for entry in entries {
+            let entry_it = entry.unwrap();
+            let entry_file_type = entry_it.file_type().unwrap();
+            let file_name = match entry_it.file_name().to_owned().to_str() {
+                Some(s) => s.to_owned(),
+                None => "".to_owned(),
+            };
+
+            all_nodes.push(file_name);
+        }
+
+        return all_nodes;
     }
 }
