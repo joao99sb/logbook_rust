@@ -1,2 +1,5 @@
-mkdir <Node Name>-Create new Node
+mknode <Node Name>-Create new Node
 rm <Node Name>-Remove empty Nodes
+lsn-List all nodes
+lsf-List all files
+ls-List all itens

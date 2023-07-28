@@ -220,16 +220,39 @@ impl Body {
             Err(e) => panic!("Erro ao ler o diretório: {}", e),
         };
 
-        let mut all_nodes: Vec<String> = Vec::new();
+        let mut all_files: Vec<String> = Vec::new();
         for entry in entries {
             let entry_it = entry.unwrap();
-            let entry_file_type = entry_it.file_type().unwrap();
+
             let file_name = match entry_it.file_name().to_owned().to_str() {
                 Some(s) => s.to_owned(),
                 None => "".to_owned(),
             };
 
-            all_nodes.push(file_name);
+            all_files.push(file_name);
+        }
+
+        return all_files;
+    }
+
+    fn list_all_nodes(current_dir: &str) -> Vec<String> {
+        let entries = match fs::read_dir(current_dir) {
+            Ok(entries) => entries,
+            Err(e) => panic!("Erro ao ler o diretório: {}", e),
+        };
+
+        let mut all_nodes: Vec<String> = Vec::new();
+        for entry in entries {
+            let entry_it = entry.unwrap();
+            let entry_file_type = entry_it.file_type().unwrap();
+
+            if entry_file_type.is_dir() {
+                let file_name = match entry_it.file_name().to_owned().to_str() {
+                    Some(s) => s.to_owned(),
+                    None => "".to_owned(),
+                };
+                all_nodes.push(file_name);
+            }
         }
 
         return all_nodes;

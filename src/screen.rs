@@ -1,5 +1,6 @@
+
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{DisableMouseCapture, EnableMouseCapture},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -9,7 +10,7 @@ use tui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Span, Spans, Text},
-    widgets::{Block, Borders, Cell, List, ListItem, Paragraph, Row, Table},
+    widgets::{Block, Borders,  Paragraph, },
     Frame, Terminal,
 };
 
@@ -60,7 +61,8 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &mut App) {
 
     let commands_file = app.command_file.clone();
     let current_dir = app.current_dir.clone();
-    let body = app.body.build_body(&commands_file,&current_dir);
+     
+    let body = app.body.build_body(&commands_file, &current_dir);
 
     match app.body.body_mode {
         BodyMode::List => {
@@ -74,7 +76,7 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &mut App) {
 }
 
 fn build_header(app: &App) -> Paragraph<'_> {
-    let (msg, style) = match app.input_mode {
+    let (msg, style) = match app.get_input_mode() {
         InputMode::Normal => (
             vec![
                 Span::raw("Press "),
@@ -103,7 +105,7 @@ fn build_header(app: &App) -> Paragraph<'_> {
 }
 
 fn build_input(app: &App) -> Paragraph<'_> {
-    let input_style = match app.input_mode {
+    let input_style = match app.get_input_mode() {
         InputMode::Normal => Style::default(),
         InputMode::Editing => Style::default().fg(Color::Yellow),
     };

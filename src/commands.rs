@@ -1,18 +1,13 @@
 #[derive(Debug)]
-pub struct Commnads {
-    pub command: String,
-    pub description: String,
-}
+pub struct Commnads;
 
 impl Commnads {
-    pub fn new(c: String, d: String) -> Commnads {
-        Commnads {
-            command: c,
-            description: d,
-        }
+    pub fn get_command(command: Vec<String>) -> CommandsList {
+        CommandsList::MKNODE
     }
 }
 
-enum CommandsList {
-    MKDIR,
+pub enum CommandsList {
+    MKNODE,
+    RM,
 }

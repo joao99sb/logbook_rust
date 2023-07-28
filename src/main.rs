@@ -2,18 +2,16 @@ mod app;
 mod body;
 mod commands;
 mod error;
+mod event;
 mod screen;
-mod keyEnvents;
 
-use std::error::Error;
 use std::io;
 
 use crossterm::terminal::{disable_raw_mode, LeaveAlternateScreen};
 
 use crate::app::{App, InputMode};
-use crate::screen::Screen;
 use crate::error::Result;
-
+use crate::screen::Screen;
 
 fn main() -> Result<()> {
     // setup terminal
@@ -32,7 +30,6 @@ fn main() -> Result<()> {
         Ok(()) => {}
         Err(e) => panic!("deu erro ao tentar criar o arquivo {}", e),
     }
-
 
     //provisório
     let rows_list = vec!["Linux", "Todo", "logbook"];
